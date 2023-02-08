@@ -11,7 +11,7 @@ composer install
 cp .env.example .env
 ```
 
-Edit `.env` and configure URL of zipped XML file.
+Edit `.env` and configure `URL` of zipped XML file.
 
 ## Usage
 
