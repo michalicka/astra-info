@@ -16,3 +16,16 @@ Edit `.env` and configure `URL` of zipped XML file.
 ## Usage
 
 Run `./console` script and select action
+
+## Tests
+
+Run `./vendor/bin/phpunit tests`
+
+## Docker
+
+Run:
+```sh
+docker-compose up -d --build
+docker exec -it astra php ./console
+docker-compose down
+```

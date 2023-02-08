@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+
+# Workspace Container
+    workspace:
+      container_name: astra
+      build:
+        context: ./env/docker/workspace
+        args:
+          - PHP_VERSION=8.1
+          - COMPOSER_PROCESS_TIMEOUT=60
+      volumes:
+        - ./:/app:cached
+      tty: true
+      stdin_open: true
