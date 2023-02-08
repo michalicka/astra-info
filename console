@@ -1,0 +1,44 @@
+#!/usr/bin/env php
+<?php
+require __DIR__.'/vendor/autoload.php';
+
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\SingleCommandApplication;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Dotenv\Dotenv;
+use App\Jobs;
+
+(new SingleCommandApplication())
+    ->setCode(function (InputInterface $input, OutputInterface $output) 
+    {
+        $dotenv = new Dotenv();
+        $dotenv->load(__DIR__.'/.env');
+
+        $helper = $this->getHelper('question');
+        $options = [
+            1 => 'How many products are there',
+            2 => 'Show products names',
+            3 => 'Show product parts',
+            4 => 'Quit',
+        ];
+        $question = new ChoiceQuestion('Please select action:', $options);
+        $question->setErrorMessage('Please select one of provided actions');
+
+        while (true) {
+            $selectedOption = $helper->ask($input, $output, $question);
+            $selectedIndex = array_search($selectedOption, $options);
+
+            $job = match ($selectedIndex) {
+                1 => new Jobs\CountProductsJob($output),
+                2 => new Jobs\ListProductsJob($output),
+                3 => new Jobs\ListProductParts($output),
+                4 => die
+            };
+
+            $job->execute();
+        }
+    })
+    ->run();
