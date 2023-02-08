@@ -10,6 +10,7 @@ use Symfony\Component\Console\SingleCommandApplication;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Dotenv\Dotenv;
 use App\Jobs;
+use App\Common\Storage;
 
 (new SingleCommandApplication())
     ->setCode(function (InputInterface $input, OutputInterface $output) 
@@ -30,11 +31,12 @@ use App\Jobs;
         while (true) {
             $selectedOption = $helper->ask($input, $output, $question);
             $selectedIndex = array_search($selectedOption, $options);
+            $storage = Storage::getInstance()->withOutput($output);
 
             $job = match ($selectedIndex) {
-                1 => new Jobs\CountProductsJob($output),
-                2 => new Jobs\ListProductsJob($output),
-                3 => new Jobs\ListProductParts($output),
+                1 => new Jobs\CountProductsJob($storage),
+                2 => new Jobs\ListProductsJob($storage),
+                3 => new Jobs\ListProductParts($storage),
                 4 => die
             };
 

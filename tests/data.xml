@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<export_full>
+    <items>
+        <item code="P1" name="Product 1"></item>
+        <item code="P2" name="Product 2"></item>
+            <parts>
+                <part>
+                    <item code="P2-P1" name="Part 1" />
+                    <item code="P2-P2" name="Part 2" />
+                </part>
+            </parts>
+        </item>
+    </items>
+</export_full>

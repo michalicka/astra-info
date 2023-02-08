@@ -9,9 +9,9 @@ class Storage
 {
     private static $instance;
     private string $url;
-    private string $tempDirectory;
-    private string $zipFile;
-    private string $dataFile;
+    private ?string $tempDirectory = null;
+    private ?string $zipFile = null;
+    private ?string $dataFile = null;
     protected OutputInterface $output;
 
     public static function getInstance()
@@ -27,7 +27,7 @@ class Storage
 
     private function __construct() 
     {
-        $this->url = $_ENV['URL'];
+        $this->url = $_ENV['URL'] ?? '';
         $this->tempDirectory = sprintf('%s%s%s', sys_get_temp_dir(), DIRECTORY_SEPARATOR, uniqid());
         
         @mkdir($this->tempDirectory);
@@ -42,6 +42,11 @@ class Storage
         $this->output = $output;
 
         return $this;
+    }
+
+    public function getOutput(): OutputInterface
+    {
+        return $this->output;
     }
 
     public function getFile(): string
@@ -62,7 +67,7 @@ class Storage
     }
 
     private function download() {
-        $this->output->writeln("Downloading $this->url");
+        $this->getOutput()->writeln("Downloading $this->url");
 
         $client = new Client();
 
@@ -75,7 +80,7 @@ class Storage
 
     private function extract(): void
     {
-        $this->output->writeln("Extracting $this->zipFile");
+        $this->getOutput()->writeln("Extracting $this->zipFile");
 
         $zip = new \ZipArchive;
         if ($zip->open($this->zipFile) === TRUE) {
@@ -87,16 +92,16 @@ class Storage
 
     private function cleanup(): void
     {
-        @unlink($this->zipFile);
-        @unlink($this->dataFile);
-        @rmdir($this->tempDirectory);
-        $this->output->writeln("Temporary folder $this->tempDirectory removed");
+        if ($this->zipFile) @unlink($this->zipFile);
+        if ($this->dataFile) @unlink($this->dataFile);
+        if ($this->tempDirectory) @rmdir($this->tempDirectory);
+        $this->getOutput()->writeln("Temporary folder $this->tempDirectory removed");
     }
 
     private function fileCheck(string $file): void
     {
         if (!file_exists($file)) {
-            $this->output->writeln("<error>Error while creating $this->tempDirectory</error>");
+            $this->getOutput()->writeln("<error>Error while creating $this->tempDirectory</error>");
             die;
         }
     }

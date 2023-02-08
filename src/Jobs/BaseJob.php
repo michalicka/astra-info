@@ -11,10 +11,10 @@ abstract class BaseJob
     protected OutputInterface $output;
     protected Parser $parser;
 
-    public function __construct(OutputInterface $output) 
+    public function __construct(Storage $storage) 
     {
-        $this->output = $output;
-        $dataFile = Storage::getInstance()->withOutput($output)->getFile();
+        $this->output = $storage->getOutput();
+        $dataFile = $storage->getFile();
         $this->parser = new $_ENV['PARSER']($dataFile);
     }
 
